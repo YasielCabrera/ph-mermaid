@@ -1,15 +1,36 @@
 {
-  "name": "ph-mermaid",
-  "description": "",
-  "category": "",
-  "publisher": {
-    "name": "",
-    "url": ""
-  },
-  "documentModels": [],
-  "apps": [],
-  "editors": [],
-  "processors": [],
-  "subgraphs": [],
-  "config": []
+	"name": "PH Mermaid",
+	"description": "Mermaid document manager",
+	"category": "Productivity",
+	"publisher": {
+		"name": "",
+		"url": ""
+	},
+	"documentModels": [
+		{
+			"id": "powerhouse/mermaid",
+			"name": "Mermaid"
+		}
+	],
+	"apps": [
+		{
+			"name": "mermaid-drive-explorer",
+			"id": "mermaid-drive-explorer",
+			"documentTypes": [
+				"powerhousedao/document-drive"
+			]
+		}
+	],
+	"editors": [
+		{
+			"id": "mermaid-editor",
+			"name": "mermaid-editor",
+			"documentTypes": [
+				"powerhouse/mermaid"
+			]
+		}
+	],
+	"processors": [],
+	"subgraphs": [],
+	"config": []
 }

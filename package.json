@@ -65,19 +65,22 @@
     "service-unstartup": "bash ./node_modules/@powerhousedao/ph-cli/dist/scripts/service-unstartup.sh"
   },
   "dependencies": {
-    "document-model": "6.0.2-staging.8",
+    "@monaco-editor/react": "4.7",
+    "@powerhousedao/analytics-engine-core": "6.0.2-staging.8",
+    "@powerhousedao/connect": "6.0.2-staging.8",
     "@powerhousedao/design-system": "6.0.2-staging.8",
+    "@powerhousedao/document-engineering": "1.40.3",
     "@powerhousedao/reactor-api": "6.0.2-staging.8",
     "@powerhousedao/reactor-browser": "6.0.2-staging.8",
-    "@powerhousedao/connect": "6.0.2-staging.8",
     "@powerhousedao/shared": "6.0.2-staging.8",
-    "@powerhousedao/analytics-engine-core": "6.0.2-staging.8",
-    "@powerhousedao/document-engineering": "1.40.3",
+    "document-model": "6.0.2-staging.8",
     "graphql": "16.12.0",
     "graphql-tag": "^2.12.6",
-    "zod": "4.3.6",
+    "mermaid": "11.15",
+    "monaco-editor": "0.55",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@powerhousedao/ph-cli": "6.0.2-staging.8",
