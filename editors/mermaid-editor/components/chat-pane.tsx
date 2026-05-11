@@ -194,7 +194,7 @@ export function ChatPane({ mermaidSource, onApplyEdit }: ChatPaneProps) {
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
-      <div className="border-t border-gray-200 p-2">
+      <div className="shrink-0 border-t border-gray-200 p-2">
         <PromptInput onSubmit={handleSubmit}>
           <PromptInputBody>
             <PromptInputTextarea

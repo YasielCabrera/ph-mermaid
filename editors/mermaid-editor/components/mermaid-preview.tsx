@@ -1,3 +1,4 @@
+import { Download } from "lucide-react";
 import mermaid from "mermaid";
 import {
   useCallback,
@@ -19,6 +20,7 @@ const MAX_ZOOM = 8;
 const ZOOM_STEP = 1.2;
 const WHEEL_ZOOM_RATE = 0.0015;
 const FIT_PADDING = 32;
+const PNG_EXPORT_SCALE = 2;
 
 type MermaidPreviewProps = {
   source: string;
@@ -168,6 +170,63 @@ export function MermaidPreview({ source }: MermaidPreviewProps) {
     userInteractedRef.current = false;
     fitToViewport();
   }, [fitToViewport]);
+
+  const downloadPng = useCallback(() => {
+    const content = contentRef.current;
+    if (!content) return;
+    const svg = content.querySelector("svg");
+    if (!svg) return;
+
+    const width = Number(svg.getAttribute("width")) || svg.clientWidth;
+    const height = Number(svg.getAttribute("height")) || svg.clientHeight;
+    if (width <= 0 || height <= 0) return;
+
+    const clone = svg.cloneNode(true) as SVGSVGElement;
+    if (!clone.getAttribute("xmlns")) {
+      clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    }
+    if (!clone.getAttribute("xmlns:xlink")) {
+      clone.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+    }
+
+    const svgData = new XMLSerializer().serializeToString(clone);
+    const svgBlob = new Blob([svgData], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+    const svgUrl = URL.createObjectURL(svgBlob);
+
+    const image = new Image();
+    image.onload = () => {
+      const canvas = window.document.createElement("canvas");
+      canvas.width = Math.round(width * PNG_EXPORT_SCALE);
+      canvas.height = Math.round(height * PNG_EXPORT_SCALE);
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        URL.revokeObjectURL(svgUrl);
+        return;
+      }
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(svgUrl);
+
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const link = window.document.createElement("a");
+        link.href = url;
+        link.download = "mermaid-diagram.png";
+        window.document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }, "image/png");
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(svgUrl);
+    };
+    image.src = svgUrl;
+  }, []);
 
   // Attach the wheel listener manually with { passive: false } — React's
   // synthetic onWheel is passive by default and would log a console error
@@ -342,6 +401,15 @@ export function MermaidPreview({ source }: MermaidPreviewProps) {
               <path d="M3 15v4a2 2 0 0 0 2 2h4" />
               <path d="M21 15v4a2 2 0 0 1-2 2h-4" />
             </svg>
+          </button>
+          <button
+            type="button"
+            onClick={downloadPng}
+            className="flex items-center rounded px-2 py-0.5 text-gray-700 hover:bg-gray-100"
+            aria-label="Download as PNG"
+            title="Download as PNG"
+          >
+            <Download className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
         </div>
       </div>

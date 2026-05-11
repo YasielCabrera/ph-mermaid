@@ -201,7 +201,7 @@ export default function Editor() {
               <div className="absolute inset-y-0 -left-1 -right-1" />
             </div>
             <div
-              className="flex flex-col"
+              className="flex min-h-0 flex-col overflow-hidden"
               style={{ width: chatPercent, minWidth: 0 }}
             >
               <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-2 text-xs font-medium uppercase tracking-wide text-gray-500">
@@ -216,11 +216,13 @@ export default function Editor() {
                   <X className="h-3.5 w-3.5" />
                 </button>
               </div>
-              <div className="min-h-0 flex-1">
-                <ChatPane
-                  mermaidSource={debouncedDraft}
-                  onApplyEdit={setDraft}
-                />
+              <div className="relative min-h-0 flex-1">
+                <div className="absolute inset-0">
+                  <ChatPane
+                    mermaidSource={debouncedDraft}
+                    onApplyEdit={setDraft}
+                  />
+                </div>
               </div>
             </div>
           </>
