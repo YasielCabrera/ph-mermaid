@@ -1,6 +1,12 @@
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { Sparkles, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { actions, useSelectedMermaidDocument } from "document-models/mermaid";
 import { ChatPane } from "./components/chat-pane.js";
 import { MonacoPane } from "./components/monaco-pane.js";
@@ -11,6 +17,7 @@ const DEBOUNCE_MS = 400;
 const MIN_PANE_RATIO = 0.15;
 const MAX_PANE_RATIO = 0.85;
 
+const DEFAULT_SOURCE_WIDTH_PX = 570;
 const DEFAULT_SOURCE_RATIO = 0.5;
 const DEFAULT_OPEN_FIRST = 1 / 3;
 const DEFAULT_OPEN_SECOND = 2 / 3;
@@ -41,6 +48,19 @@ export default function Editor() {
   const [firstRatio, setFirstRatio] = useState(DEFAULT_SOURCE_RATIO);
   const [secondRatio, setSecondRatio] = useState(DEFAULT_OPEN_SECOND);
   const [dragging, setDragging] = useState<DragTarget | null>(null);
+  const initialWidthAppliedRef = useRef(false);
+
+  useLayoutEffect(() => {
+    if (initialWidthAppliedRef.current) return;
+    const container = splitContainerRef.current;
+    if (!container) return;
+    const width = container.getBoundingClientRect().width;
+    if (width <= 0) return;
+    const ratio = DEFAULT_SOURCE_WIDTH_PX / width;
+    const clamped = Math.min(MAX_PANE_RATIO, Math.max(MIN_PANE_RATIO, ratio));
+    setFirstRatio(clamped);
+    initialWidthAppliedRef.current = true;
+  }, []);
 
   useEffect(() => {
     if (!dragging) return;
