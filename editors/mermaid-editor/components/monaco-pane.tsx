@@ -88,6 +88,17 @@ export function MonacoPane({ value, onChange }: MonacoPaneProps) {
           renderWhitespace: "none",
           lineNumbers: "on",
           smoothScrolling: true,
+          quickSuggestions: { other: true, comments: false, strings: false },
+          suggestOnTriggerCharacters: true,
+          tabCompletion: "on",
+          snippetSuggestions: "top",
+          wordBasedSuggestions: "currentDocument",
+          suggest: {
+            showSnippets: true,
+            showKeywords: true,
+            showWords: true,
+            snippetsPreventQuickSuggestions: false,
+          },
         }}
       />
     </div>
