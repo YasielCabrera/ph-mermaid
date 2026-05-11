@@ -14,6 +14,8 @@ const ignoredFiles = [
   "**/.ph/",
   "**/storybook-static/",
   "**/.vite/",
+  "**/components/ai-elements/**",
+  "**/components/ui/**",
 ];
 
 /** Global configs for eslint ignores */
