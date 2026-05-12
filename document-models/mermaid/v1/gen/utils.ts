@@ -24,7 +24,10 @@ import type {
   MermaidPHState,
 } from "./types.js";
 
-export const initialGlobalState: MermaidGlobalState = { mermaid: "" };
+export const initialGlobalState: MermaidGlobalState = {
+  mermaid: "",
+  description: "",
+};
 export const initialLocalState: MermaidLocalState = {};
 
 export const utils: DocumentModelUtils<MermaidPHState> = {

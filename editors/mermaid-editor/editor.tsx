@@ -24,12 +24,18 @@ const DEFAULT_OPEN_SECOND = 2 / 3;
 
 type DragTarget = "first" | "second";
 
+type SourceTab = "source" | "description";
+
 export default function Editor() {
   const [document, dispatch] = useSelectedMermaidDocument();
   const storedSource = document.state.global.mermaid;
+  const storedDescription = document.state.global.description ?? "";
 
   const [draft, setDraft] = useState(storedSource);
   const debouncedDraft = useDebouncedValue(draft, DEBOUNCE_MS);
+  const [descriptionDraft, setDescriptionDraft] = useState(storedDescription);
+  const debouncedDescription = useDebouncedValue(descriptionDraft, DEBOUNCE_MS);
+  const [activeTab, setActiveTab] = useState<SourceTab>("source");
 
   useEffect(() => {
     if (storedSource !== draft) {
@@ -38,10 +44,22 @@ export default function Editor() {
   }, [storedSource]);
 
   useEffect(() => {
+    if (storedDescription !== descriptionDraft) {
+      setDescriptionDraft(storedDescription);
+    }
+  }, [storedDescription]);
+
+  useEffect(() => {
     if (debouncedDraft !== storedSource) {
       dispatch(actions.setMermaid({ mermaid: debouncedDraft }));
     }
   }, [debouncedDraft, storedSource, dispatch]);
+
+  useEffect(() => {
+    if (debouncedDescription !== storedDescription) {
+      dispatch(actions.setDescription({ description: debouncedDescription }));
+    }
+  }, [debouncedDescription, storedDescription, dispatch]);
 
   const [chatOpen, setChatOpen] = useState(false);
   const splitContainerRef = useRef<HTMLDivElement | null>(null);
@@ -140,8 +158,35 @@ export default function Editor() {
           className="flex flex-col"
           style={{ width: sourcePercent, minWidth: 0 }}
         >
-          <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-2 text-xs font-medium uppercase tracking-wide text-gray-500">
-            <span>Source</span>
+          <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 pr-4 text-xs font-medium uppercase tracking-wide text-gray-500">
+            <div role="tablist" aria-label="Source view" className="flex">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === "source"}
+                onClick={() => setActiveTab("source")}
+                className={`border-b-2 px-4 py-2 transition-colors ${
+                  activeTab === "source"
+                    ? "border-blue-500 text-gray-700"
+                    : "border-transparent hover:text-gray-700"
+                }`}
+              >
+                Source
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === "description"}
+                onClick={() => setActiveTab("description")}
+                className={`border-b-2 px-4 py-2 transition-colors ${
+                  activeTab === "description"
+                    ? "border-blue-500 text-gray-700"
+                    : "border-transparent hover:text-gray-700"
+                }`}
+              >
+                Description
+              </button>
+            </div>
             <button
               type="button"
               onClick={chatOpen ? closeChat : openChat}
@@ -158,7 +203,15 @@ export default function Editor() {
             </button>
           </div>
           <div className="min-h-0 flex-1">
-            <MonacoPane value={draft} onChange={setDraft} />
+            {activeTab === "source" ? (
+              <MonacoPane value={draft} onChange={setDraft} />
+            ) : (
+              <MonacoPane
+                value={descriptionDraft}
+                onChange={setDescriptionDraft}
+                language="markdown"
+              />
+            )}
           </div>
         </div>
         <div

@@ -6,7 +6,10 @@ import type { MermaidPHState } from "document-models/mermaid/v1";
 
 import { mermaidMermaidOperations } from "../src/reducers/mermaid.js";
 
-import { SetMermaidInputSchema } from "./schema/zod.js";
+import {
+  SetDescriptionInputSchema,
+  SetMermaidInputSchema,
+} from "./schema/zod.js";
 
 const stateReducer: StateReducer<MermaidPHState> = (
   state,
@@ -21,6 +24,18 @@ const stateReducer: StateReducer<MermaidPHState> = (
       SetMermaidInputSchema().parse(action.input);
 
       mermaidMermaidOperations.setMermaidOperation(
+        (state as any)[action.scope],
+        action as any,
+        dispatch,
+      );
+
+      break;
+    }
+
+    case "SET_DESCRIPTION": {
+      SetDescriptionInputSchema().parse(action.input);
+
+      mermaidMermaidOperations.setDescriptionOperation(
         (state as any)[action.scope],
         action as any,
         dispatch,

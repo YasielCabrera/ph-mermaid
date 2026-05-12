@@ -14,8 +14,8 @@
 	],
 	"apps": [
 		{
-			"name": "mermaid-drive-explorer",
 			"id": "mermaid-drive-explorer",
+			"name": "mermaid-drive-explorer",
 			"documentTypes": [
 				"powerhousedao/document-drive"
 			]

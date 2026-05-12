@@ -14,7 +14,7 @@ import type {
 import { utils } from "./utils.js";
 
 export function defaultGlobalState(): MermaidGlobalState {
-  return { mermaid: "" };
+  return { mermaid: "", description: "" };
 }
 
 export function defaultLocalState(): MermaidLocalState {

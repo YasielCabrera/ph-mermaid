@@ -9,6 +9,7 @@ import {
 type MonacoPaneProps = {
   value: string;
   onChange: (value: string) => void;
+  language?: string;
 };
 
 let loaderConfigured = false;
@@ -37,7 +38,11 @@ function configureLoaderOnce() {
   }
 }
 
-export function MonacoPane({ value, onChange }: MonacoPaneProps) {
+export function MonacoPane({
+  value,
+  onChange,
+  language = MERMAID_LANGUAGE_ID,
+}: MonacoPaneProps) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -74,8 +79,9 @@ export function MonacoPane({ value, onChange }: MonacoPaneProps) {
     <div className="h-full w-full">
       <Editor
         height="100%"
-        defaultLanguage={MERMAID_LANGUAGE_ID}
-        theme="mermaid-light"
+        defaultLanguage={language}
+        language={language}
+        theme={language === MERMAID_LANGUAGE_ID ? "mermaid-light" : "vs"}
         value={value}
         onChange={propagateValue}
         options={{

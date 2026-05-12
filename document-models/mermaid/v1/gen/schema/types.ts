@@ -60,7 +60,12 @@ export type Scalars = {
 };
 
 export type MermaidState = {
+  description: Maybe<Scalars["String"]["output"]>;
   mermaid: Scalars["String"]["output"];
+};
+
+export type SetDescriptionInput = {
+  description: Scalars["String"]["input"];
 };
 
 export type SetMermaidInput = {

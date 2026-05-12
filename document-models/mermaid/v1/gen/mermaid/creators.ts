@@ -3,9 +3,12 @@
  * This file is auto-generated and updated by codegen
  */
 import { createAction } from "document-model";
-import { SetMermaidInputSchema } from "../schema/zod.js";
-import type { SetMermaidInput } from "../types.js";
-import type { SetMermaidAction } from "./actions.js";
+import {
+  SetDescriptionInputSchema,
+  SetMermaidInputSchema,
+} from "../schema/zod.js";
+import type { SetDescriptionInput, SetMermaidInput } from "../types.js";
+import type { SetDescriptionAction, SetMermaidAction } from "./actions.js";
 
 export const setMermaid = (input: SetMermaidInput) =>
   createAction<SetMermaidAction>(
@@ -13,5 +16,14 @@ export const setMermaid = (input: SetMermaidInput) =>
     { ...input },
     undefined,
     SetMermaidInputSchema,
+    "global",
+  );
+
+export const setDescription = (input: SetDescriptionInput) =>
+  createAction<SetDescriptionAction>(
+    "SET_DESCRIPTION",
+    { ...input },
+    undefined,
+    SetDescriptionInputSchema,
     "global",
   );

@@ -16,9 +16,9 @@
           "initialValue": ""
         },
         "global": {
-          "schema": "type MermaidState {\n    mermaid: String!\n}",
+          "schema": "type MermaidState {\n    mermaid: String!\n    description: String\n}",
           "examples": [],
-          "initialValue": "{\"mermaid\":\"\"}"
+          "initialValue": "{\"mermaid\":\"\",\"description\":\"\"}"
         }
       },
       "modules": [
@@ -34,6 +34,17 @@
               "schema": "input SetMermaidInput {\n    mermaid: String!\n}",
               "template": "",
               "reducer": "state.mermaid = action.input.mermaid;",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "01a00000-0000-4000-8000-000000000003",
+              "name": "SET_DESCRIPTION",
+              "description": "Sets the markdown description for the diagram.",
+              "schema": "input SetDescriptionInput {\n    description: String!\n}",
+              "template": "",
+              "reducer": "state.description = action.input.description;",
               "errors": [],
               "examples": [],
               "scope": "global"

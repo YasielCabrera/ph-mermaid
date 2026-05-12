@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as z from "zod";
-import type { MermaidState, SetMermaidInput } from "./types.js";
+import type {
+  MermaidState,
+  SetDescriptionInput,
+  SetMermaidInput,
+} from "./types.js";
 
 type Properties<T> = Required<{
   [K in keyof T]: z.ZodType<T[K]>;
@@ -19,7 +23,16 @@ export const definedNonNullAnySchema = z
 export function MermaidStateSchema(): z.ZodObject<Properties<MermaidState>> {
   return z.object({
     __typename: z.literal("MermaidState").optional(),
+    description: z.string().nullish(),
     mermaid: z.string(),
+  });
+}
+
+export function SetDescriptionInputSchema(): z.ZodObject<
+  Properties<SetDescriptionInput>
+> {
+  return z.object({
+    description: z.string(),
   });
 }
 

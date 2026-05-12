@@ -21,10 +21,15 @@ scalar Upload
 
 type MermaidState {
     mermaid: String!
+    description: String
 }
 
 # mermaid
 
 input SetMermaidInput {
     mermaid: String!
+}
+
+input SetDescriptionInput {
+    description: String!
 }
