@@ -1,4 +1,4 @@
-import { Download } from "lucide-react";
+import { Download, Maximize2, Minimize2 } from "lucide-react";
 import mermaid from "mermaid";
 import {
   useCallback,
@@ -69,6 +69,7 @@ export function MermaidPreview({ source }: MermaidPreviewProps) {
     originTy: number;
   } | null>(null);
   const [isPanning, setIsPanning] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const fitToViewport = useCallback(() => {
     const viewport = viewportRef.current;
@@ -170,6 +171,31 @@ export function MermaidPreview({ source }: MermaidPreviewProps) {
     userInteractedRef.current = false;
     fitToViewport();
   }, [fitToViewport]);
+
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => !prev);
+  }, []);
+
+  // Re-fit after the viewport actually resizes into / out of the overlay.
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      userInteractedRef.current = false;
+      fitToViewport();
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [isFullscreen, fitToViewport]);
+
+  // Escape exits the overlay, matching the browser fullscreen affordance.
+  useEffect(() => {
+    if (!isFullscreen) return;
+    function handleKey(event: KeyboardEvent) {
+      if (event.key === "Escape") setIsFullscreen(false);
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [isFullscreen]);
 
   const downloadPng = useCallback(() => {
     const content = contentRef.current;
@@ -329,7 +355,11 @@ export function MermaidPreview({ source }: MermaidPreviewProps) {
   return (
     <div
       ref={viewportRef}
-      className="relative h-full w-full overflow-hidden bg-white select-none"
+      className={
+        isFullscreen
+          ? "fixed inset-0 z-50 overflow-hidden bg-white select-none"
+          : "relative h-full w-full overflow-hidden bg-white select-none"
+      }
       style={{ cursor: isPanning ? "grabbing" : "grab" }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
@@ -401,6 +431,20 @@ export function MermaidPreview({ source }: MermaidPreviewProps) {
               <path d="M3 15v4a2 2 0 0 0 2 2h4" />
               <path d="M21 15v4a2 2 0 0 1-2 2h-4" />
             </svg>
+          </button>
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            className="flex items-center rounded px-2 py-0.5 text-gray-700 hover:bg-gray-100"
+            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            aria-pressed={isFullscreen}
+            title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+          >
+            {isFullscreen ? (
+              <Minimize2 className="size-3.5" aria-hidden="true" />
+            ) : (
+              <Maximize2 className="size-3.5" aria-hidden="true" />
+            )}
           </button>
           <button
             type="button"
