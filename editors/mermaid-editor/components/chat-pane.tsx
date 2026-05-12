@@ -178,12 +178,12 @@ export function ChatPane({ mermaidSource, onApplyEdit }: ChatPaneProps) {
                 <Message from="assistant" aria-live="polite">
                   <MessageContent>
                     <div className="flex items-center gap-2 text-muted-foreground">
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="size-4 animate-spin" />
                       <span>Claude is thinking</span>
                       <span className="inline-flex gap-0.5">
-                        <span className="size-1 animate-bounce rounded-full bg-current [animation-delay:-0.3s]" />
-                        <span className="size-1 animate-bounce rounded-full bg-current [animation-delay:-0.15s]" />
-                        <span className="size-1 animate-bounce rounded-full bg-current" />
+                        <span className="size-1 animate-pulse rounded-full bg-current [animation-delay:-0.3s]" />
+                        <span className="size-1 animate-pulse rounded-full bg-current [animation-delay:-0.15s]" />
+                        <span className="size-1 animate-pulse rounded-full bg-current" />
                       </span>
                     </div>
                   </MessageContent>

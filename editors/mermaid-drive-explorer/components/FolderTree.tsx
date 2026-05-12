@@ -16,29 +16,30 @@ function buildSidebarNodes(
   nodes: Node[],
   parentId: string | null | undefined,
 ): SidebarNode[] {
-  return nodes
-    .filter((n) => {
-      if (parentId == null) {
-        return n.parentFolder == null;
-      }
-      return n.parentFolder === parentId;
-    })
-    .map((node): SidebarNode => {
-      if (node.kind === "folder") {
-        return {
-          id: node.id,
-          title: node.name,
-          icon: "FolderClose" as const,
-          expandedIcon: "FolderOpen" as const,
-          children: buildSidebarNodes(nodes, node.id),
-        };
-      }
-      return {
+  const result: SidebarNode[] = [];
+  for (const node of nodes) {
+    const matchesParent =
+      parentId == null
+        ? node.parentFolder == null
+        : node.parentFolder === parentId;
+    if (!matchesParent) continue;
+    if (node.kind === "folder") {
+      result.push({
+        id: node.id,
+        title: node.name,
+        icon: "FolderClose" as const,
+        expandedIcon: "FolderOpen" as const,
+        children: buildSidebarNodes(nodes, node.id),
+      });
+    } else {
+      result.push({
         id: node.id,
         title: node.name,
         icon: "File" as const,
-      };
-    });
+      });
+    }
+  }
+  return result;
 }
 
 function transformNodesToSidebarNodes(

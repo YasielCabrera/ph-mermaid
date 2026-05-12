@@ -57,7 +57,7 @@ export function MonacoPane({ value, onChange }: MonacoPaneProps) {
     };
   }, []);
 
-  const handleChange = useCallback(
+  const propagateValue = useCallback(
     (next: string | undefined) => onChange(next ?? ""),
     [onChange],
   );
@@ -77,7 +77,7 @@ export function MonacoPane({ value, onChange }: MonacoPaneProps) {
         defaultLanguage={MERMAID_LANGUAGE_ID}
         theme="mermaid-light"
         value={value}
-        onChange={handleChange}
+        onChange={propagateValue}
         options={{
           minimap: { enabled: false },
           fontSize: 13,

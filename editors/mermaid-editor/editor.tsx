@@ -154,7 +154,7 @@ export default function Editor() {
                   : "text-gray-500 hover:bg-gray-200 hover:text-gray-700"
               }`}
             >
-              <Sparkles className="h-3.5 w-3.5" />
+              <Sparkles className="size-3.5" />
             </button>
           </div>
           <div className="min-h-0 flex-1">
@@ -213,7 +213,7 @@ export default function Editor() {
                   title="Close chat"
                   className="inline-flex h-6 w-6 items-center justify-center rounded text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-700"
                 >
-                  <X className="h-3.5 w-3.5" />
+                  <X className="size-3.5" />
                 </button>
               </div>
               <div className="relative min-h-0 flex-1">

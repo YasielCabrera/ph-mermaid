@@ -409,7 +409,7 @@ export function MermaidPreview({ source }: MermaidPreviewProps) {
             aria-label="Download as PNG"
             title="Download as PNG"
           >
-            <Download className="h-3.5 w-3.5" aria-hidden="true" />
+            <Download className="size-3.5" aria-hidden="true" />
           </button>
         </div>
       </div>
