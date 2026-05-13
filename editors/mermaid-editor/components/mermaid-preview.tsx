@@ -197,61 +197,95 @@ export function MermaidPreview({ source }: MermaidPreviewProps) {
     };
   }, [isFullscreen]);
 
-  const downloadPng = useCallback(() => {
+  const downloadPng = useCallback(async () => {
     const content = contentRef.current;
     if (!content) return;
     const svg = content.querySelector("svg");
     if (!svg) return;
 
-    const width = Number(svg.getAttribute("width")) || svg.clientWidth;
-    const height = Number(svg.getAttribute("height")) || svg.clientHeight;
+    // Prefer the viewBox over rendered width/height — mermaid sometimes leaves
+    // width/height attributes as percentages, and getBoundingClientRect on the
+    // transformed parent reflects the scaled size, not the natural one.
+    const viewBox = svg.viewBox.baseVal;
+    const bbox = svg.getBoundingClientRect();
+    const attrW = Number(svg.getAttribute("width"));
+    const attrH = Number(svg.getAttribute("height"));
+    const width =
+      (viewBox.width > 0 ? viewBox.width : 0) ||
+      (Number.isFinite(attrW) && attrW > 0 ? attrW : 0) ||
+      bbox.width;
+    const height =
+      (viewBox.height > 0 ? viewBox.height : 0) ||
+      (Number.isFinite(attrH) && attrH > 0 ? attrH : 0) ||
+      bbox.height;
     if (width <= 0 || height <= 0) return;
 
     const clone = svg.cloneNode(true) as SVGSVGElement;
-    if (!clone.getAttribute("xmlns")) {
-      clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    }
-    if (!clone.getAttribute("xmlns:xlink")) {
-      clone.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+    clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    clone.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+    // Force fixed pixel dimensions on the clone so the rasterizer doesn't have
+    // to guess from a transformed/percentage layout.
+    clone.setAttribute("width", String(width));
+    clone.setAttribute("height", String(height));
+    clone.style.maxWidth = "none";
+    clone.style.background = "#ffffff";
+
+    // Wait for fonts so glyphs measured at render time also render to canvas.
+    try {
+      await window.document.fonts.ready;
+    } catch {
+      // Non-fatal: continue without waiting.
     }
 
-    const svgData = new XMLSerializer().serializeToString(clone);
-    const svgBlob = new Blob([svgData], {
-      type: "image/svg+xml;charset=utf-8",
-    });
-    const svgUrl = URL.createObjectURL(svgBlob);
+    const svgString = new XMLSerializer().serializeToString(clone);
+    // Base64 data URL is more reliable across browsers than blob URLs for
+    // rasterizing SVGs that contain <foreignObject> or <style> blocks.
+    const utf8 = new TextEncoder().encode(svgString);
+    let binary = "";
+    for (let i = 0; i < utf8.length; i += 1) {
+      binary += String.fromCharCode(utf8[i]);
+    }
+    const dataUrl = `data:image/svg+xml;base64,${window.btoa(binary)}`;
 
     const image = new Image();
-    image.onload = () => {
-      const canvas = window.document.createElement("canvas");
-      canvas.width = Math.round(width * PNG_EXPORT_SCALE);
-      canvas.height = Math.round(height * PNG_EXPORT_SCALE);
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        URL.revokeObjectURL(svgUrl);
-        return;
-      }
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-      URL.revokeObjectURL(svgUrl);
+    image.decoding = "sync";
+    try {
+      await new Promise<void>((resolve, reject) => {
+        image.onload = () => resolve();
+        image.onerror = () =>
+          reject(new Error("Failed to load diagram SVG for export"));
+        image.src = dataUrl;
+      });
+    } catch (err) {
+      console.error("[mermaid] PNG export failed:", err);
+      return;
+    }
 
-      canvas.toBlob((blob) => {
-        if (!blob) return;
-        const url = URL.createObjectURL(blob);
-        const link = window.document.createElement("a");
-        link.href = url;
-        link.download = "mermaid-diagram.png";
-        window.document.body.appendChild(link);
-        link.click();
-        link.remove();
-        URL.revokeObjectURL(url);
-      }, "image/png");
-    };
-    image.onerror = () => {
-      URL.revokeObjectURL(svgUrl);
-    };
-    image.src = svgUrl;
+    const canvas = window.document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(width * PNG_EXPORT_SCALE));
+    canvas.height = Math.max(1, Math.round(height * PNG_EXPORT_SCALE));
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const blob: Blob | null = await new Promise((resolve) => {
+      canvas.toBlob((b) => resolve(b), "image/png");
+    });
+    if (!blob) {
+      console.error("[mermaid] PNG export failed: canvas.toBlob returned null");
+      return;
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = window.document.createElement("a");
+    link.href = url;
+    link.download = "mermaid-diagram.png";
+    window.document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
   }, []);
 
   // Attach the wheel listener manually with { passive: false } — React's
@@ -448,7 +482,7 @@ export function MermaidPreview({ source }: MermaidPreviewProps) {
           </button>
           <button
             type="button"
-            onClick={downloadPng}
+            onClick={() => void downloadPng()}
             className="flex items-center rounded px-2 py-0.5 text-gray-700 hover:bg-gray-100"
             aria-label="Download as PNG"
             title="Download as PNG"
