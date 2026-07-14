@@ -67,13 +67,13 @@
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.139",
     "@monaco-editor/react": "4.7",
-    "@powerhousedao/analytics-engine-core": "6.0.2-staging.8",
-    "@powerhousedao/connect": "6.0.2-staging.8",
-    "@powerhousedao/design-system": "6.0.2-staging.8",
+    "@powerhousedao/analytics-engine-core": "6.2.1-dev.5",
+    "@powerhousedao/connect": "6.2.1-dev.5",
+    "@powerhousedao/design-system": "6.2.1-dev.5",
     "@powerhousedao/document-engineering": "1.40.3",
-    "@powerhousedao/reactor-api": "6.0.2-staging.8",
-    "@powerhousedao/reactor-browser": "6.0.2-staging.8",
-    "@powerhousedao/shared": "6.0.2-staging.8",
+    "@powerhousedao/reactor-api": "6.2.1-dev.5",
+    "@powerhousedao/reactor-browser": "6.2.1-dev.5",
+    "@powerhousedao/shared": "6.2.1-dev.5",
     "@streamdown/cjk": "^1.0.3",
     "@streamdown/code": "^1.1.1",
     "@streamdown/math": "^1.0.2",
@@ -82,7 +82,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "document-model": "6.0.2-staging.8",
+    "document-model": "6.2.1-dev.5",
     "graphql": "16.12.0",
     "graphql-tag": "^2.12.6",
     "lucide-react": "^1.14.0",
@@ -103,8 +103,8 @@
     "@electric-sql/pglite": "0.3.15",
     "@electric-sql/pglite-tools": "0.2.20",
     "@eslint/js": "^9.38.0",
-    "@powerhousedao/ph-cli": "6.0.2-staging.8",
-    "@powerhousedao/reactor": "6.0.2-staging.8",
+    "@powerhousedao/ph-cli": "6.2.1-dev.5",
+    "@powerhousedao/reactor": "6.2.1-dev.5",
     "@tailwindcss/cli": "^4.1.18",
     "@types/node": "^24.9.2",
     "@types/react": "^19.2.3",
@@ -120,5 +120,16 @@
     "typescript-eslint": "^8.46.2",
     "vite-tsconfig-paths": "6.1.1",
     "vitest": "4.1.1"
-  }
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@apollo/protobufjs",
+      "@datadog/pprof",
+      "@parcel/watcher",
+      "esbuild",
+      "protobufjs"
+    ]
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "ph-mermaid@1.0.0"
 }
